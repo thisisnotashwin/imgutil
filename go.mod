@@ -2,7 +2,10 @@ module github.com/thisisnotashwin/imgutil
 
 go 1.25.0
 
-require github.com/google/go-containerregistry v0.20.7
+require (
+	github.com/google/go-containerregistry v0.20.7
+	github.com/spf13/cobra v1.10.1
+)
 
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
@@ -22,6 +25,7 @@ require (
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/klauspost/compress v1.18.1 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/moby/docker-image-spec v1.3.1 // indirect
@@ -30,6 +34,7 @@ require (
 	github.com/opencontainers/image-spec v1.1.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
+	github.com/spf13/pflag v1.0.9 // indirect
 	github.com/vbatts/tar-split v0.12.2 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.61.0 // indirect
