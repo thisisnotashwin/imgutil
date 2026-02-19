@@ -17,3 +17,7 @@ build: ## Build binary for current platform → ./bin/imgutil
 .PHONY: clean
 clean: ## Remove build artefacts (bin/ and dist/)
 	@rm -rf bin dist
+
+.PHONY: test
+test: ## Run all tests with race detector
+	@go test -race -v ./...
