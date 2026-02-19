@@ -21,3 +21,12 @@ clean: ## Remove build artefacts (bin/ and dist/)
 .PHONY: test
 test: ## Run all tests with race detector
 	@go test -race -v ./...
+
+.PHONY: lint
+lint: ## Run golangci-lint
+	@golangci-lint run ./...
+
+.PHONY: fmt
+fmt: ## Format code and run go vet
+	@gofmt -w .
+	@go vet ./...

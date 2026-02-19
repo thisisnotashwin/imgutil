@@ -62,26 +62,26 @@ func printJSON(w io.Writer, v any) error {
 
 func printInspectHuman(w io.Writer, data InspectData) error {
 	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
-	fmt.Fprintf(tw, "Reference:\t%s\n", data.Reference)
-	fmt.Fprintf(tw, "Digest:\t%s\n", data.Digest)
-	fmt.Fprintf(tw, "OS/Arch:\t%s/%s\n", data.OS, data.Arch)
-	fmt.Fprintf(tw, "Created:\t%s\n", data.Created)
-	fmt.Fprintf(tw, "Size:\t%s\n", HumanSize(data.SizeBytes))
-	fmt.Fprintf(tw, "Entrypoint:\t%v\n", data.Entrypoint)
-	fmt.Fprintf(tw, "Cmd:\t%v\n", data.Cmd)
+	_, _ = fmt.Fprintf(tw, "Reference:\t%s\n", data.Reference)
+	_, _ = fmt.Fprintf(tw, "Digest:\t%s\n", data.Digest)
+	_, _ = fmt.Fprintf(tw, "OS/Arch:\t%s/%s\n", data.OS, data.Arch)
+	_, _ = fmt.Fprintf(tw, "Created:\t%s\n", data.Created)
+	_, _ = fmt.Fprintf(tw, "Size:\t%s\n", HumanSize(data.SizeBytes))
+	_, _ = fmt.Fprintf(tw, "Entrypoint:\t%v\n", data.Entrypoint)
+	_, _ = fmt.Fprintf(tw, "Cmd:\t%v\n", data.Cmd)
 	if len(data.Env) > 0 {
-		fmt.Fprintf(tw, "Env:\n")
+		_, _ = fmt.Fprintf(tw, "Env:\n")
 		for _, e := range data.Env {
-			fmt.Fprintf(tw, "  %s\t\n", e)
+			_, _ = fmt.Fprintf(tw, "  %s\t\n", e)
 		}
 	}
 	if len(data.Ports) > 0 {
-		fmt.Fprintf(tw, "Ports:\t%v\n", data.Ports)
+		_, _ = fmt.Fprintf(tw, "Ports:\t%v\n", data.Ports)
 	}
 	if len(data.Labels) > 0 {
-		fmt.Fprintf(tw, "Labels:\n")
+		_, _ = fmt.Fprintf(tw, "Labels:\n")
 		for k, v := range data.Labels {
-			fmt.Fprintf(tw, "  %s=%s\t\n", k, v)
+			_, _ = fmt.Fprintf(tw, "  %s=%s\t\n", k, v)
 		}
 	}
 	return tw.Flush()
@@ -89,13 +89,13 @@ func printInspectHuman(w io.Writer, data InspectData) error {
 
 func printLayersHuman(w io.Writer, layers []LayerData) error {
 	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
-	fmt.Fprintf(tw, "#\tDIGEST\tSIZE\tCOMMAND\n")
+	_, _ = fmt.Fprintf(tw, "#\tDIGEST\tSIZE\tCOMMAND\n")
 	for _, l := range layers {
 		digest := l.Digest
 		if len(digest) > 19 {
 			digest = digest[:19]
 		}
-		fmt.Fprintf(tw, "%d\t%s\t%s\t%s\n", l.Index+1, digest, HumanSize(l.Size), l.Command)
+		_, _ = fmt.Fprintf(tw, "%d\t%s\t%s\t%s\n", l.Index+1, digest, HumanSize(l.Size), l.Command)
 	}
 	return tw.Flush()
 }
