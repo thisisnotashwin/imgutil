@@ -14,9 +14,9 @@ import (
 type Source int
 
 const (
-	Auto      Source = iota // try daemon first, fall back to registry
-	LocalOnly               // daemon only
-	RemoteOnly              // registry only
+	Auto       Source = iota // try daemon first, fall back to registry
+	LocalOnly                // daemon only
+	RemoteOnly               // registry only
 )
 
 // Loader resolves Docker image references to v1.Image values.
