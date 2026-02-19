@@ -34,3 +34,14 @@ fmt: ## Format code and run go vet
 .PHONY: install
 install: ## Install binary to $GOPATH/bin
 	@go install $(LDFLAGS) ./cmd/imgutil
+
+.PHONY: release
+release: ## Cross-compile for all platforms → ./dist/
+	@mkdir -p dist
+	@$(foreach PLATFORM,$(PLATFORMS), \
+		$(eval OS   := $(word 1,$(subst /, ,$(PLATFORM)))) \
+		$(eval ARCH := $(word 2,$(subst /, ,$(PLATFORM)))) \
+		echo "Building $(OS)/$(ARCH)..."; \
+		GOOS=$(OS) GOARCH=$(ARCH) go build $(LDFLAGS) \
+			-o dist/$(BINARY)-$(OS)-$(ARCH) ./cmd/imgutil; \
+	)
