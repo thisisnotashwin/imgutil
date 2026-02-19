@@ -31,5 +31,11 @@ go.work.sum
 .idea/
 # .vscode/
 
+# Local Claude Code context (personal, not team-shared)
+.claude.local.md
+
 bin/
 dist/
+
+# Git worktrees
+.worktrees/
