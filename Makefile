@@ -30,3 +30,7 @@ lint: ## Run golangci-lint
 fmt: ## Format code and run go vet
 	@gofmt -w .
 	@go vet ./...
+
+.PHONY: install
+install: ## Install binary to $GOPATH/bin
+	@go install $(LDFLAGS) ./cmd/imgutil
