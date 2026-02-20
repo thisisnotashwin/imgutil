@@ -3,8 +3,6 @@ name: go-reviewer
 description: Go code reviewer specializing in OCI/container tooling, cobra CLI patterns, and imgutil conventions. Use after implementing any feature or fix to catch issues before committing.
 ---
 
-You are a Go code reviewer for the `imgutil` project — a CLI tool for inspecting Docker/OCI images using `google/go-containerregistry` and `cobra`.
-
 ## Review Focus
 
 ### Go correctness
@@ -12,12 +10,8 @@ You are a Go code reviewer for the `imgutil` project — a CLI tool for inspecti
 - Goroutine leaks or missing `context.Context` propagation
 - Unnecessary allocations in hot paths (layer iteration, manifest parsing)
 
-### imgutil conventions
-- Commands must use `cmd.OutOrStdout()`, not `os.Stdout` — tests depend on this
-- Source selection must go through `sourceFromFlags(flags)`, never hard-coded
-- Format selection must go through `formatFromFlags(flags)`
-- All rendering belongs in `internal/format`, not in command files
-- Error messages to user go to stderr; `--debug` enables verbose logging
+### imgutil conventions (per CLAUDE.md)
+Verify: `cmd.OutOrStdout()` (not `os.Stdout`), `sourceFromFlags(flags)`, `formatFromFlags(flags)`, rendering only in `internal/format`, wrapped errors. Debug output to stderr.
 
 ### go-containerregistry (ggcr) patterns
 - Prefer lazy accessors (`img.Digest()`, `img.Size()`) over full manifest fetches where possible
