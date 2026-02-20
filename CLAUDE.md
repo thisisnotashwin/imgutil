@@ -27,3 +27,8 @@ Module: `github.com/thisisnotashwin/imgutil`
 ## ggcr Patterns
 - Prefer lazy accessors (`img.Digest()`, `img.Size()`) over full manifest fetches
 - Only fetch layer content when explicitly needed — manifests/configs are cheap
+
+## Claude Tools
+- **Agents**: `go-reviewer` (post-implementation), `security-reviewer` (pre-PR)
+- **Skills**: `/new-command <name>` (scaffold command), `/security-review` (gate before PR)
+- **Hooks**: `Edit|Write` → `go build ./...` auto-runs; `Bash` → security-gate pre-check
