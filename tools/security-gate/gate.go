@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -26,6 +27,15 @@ type checkFailure struct {
 	output string
 }
 
+// ansiPattern matches ANSI terminal escape sequences.
+var ansiPattern = regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
+
+// stripANSI removes ANSI escape sequences from s to prevent terminal
+// manipulation via crafted source file content embedded in tool output.
+func stripANSI(s string) string {
+	return ansiPattern.ReplaceAllString(s, "")
+}
+
 // Run is the core gate logic. It parses the Claude tool input JSON, short-
 // circuits if the command is not "gh pr create", otherwise runs three checks
 // and returns a structured Result.
@@ -34,7 +44,7 @@ func Run(input, repoDir string, exec execFunc) Result {
 	if !ok {
 		return Result{Code: 0}
 	}
-	if !strings.Contains(cmd, "gh pr create") {
+	if !strings.Contains(strings.ToLower(cmd), "gh pr create") {
 		return Result{Code: 0}
 	}
 	failures := runChecks(repoDir, exec)
@@ -69,7 +79,13 @@ func runChecks(repoDir string, exec execFunc) []checkFailure {
 			if line == "" {
 				continue
 			}
-			if strings.Contains(line, "vendor/") || strings.Contains(line, "_test.go") {
+			// Extract the file path (text before the first ':') so that
+			// pattern content in the matched line cannot spoof the filter.
+			path := line
+			if i := strings.Index(line, ":"); i >= 0 {
+				path = line[:i]
+			}
+			if strings.Contains(path, "vendor/") || strings.Contains(path, "_test.go") {
 				continue
 			}
 			kept = append(kept, line)
@@ -101,7 +117,7 @@ func formatResult(failures []checkFailure) Result {
 	sb.WriteString("The following automated security checks failed:\n\n")
 	for _, f := range failures {
 		sb.WriteString(fmt.Sprintf("[%s]\n", f.tool))
-		sb.WriteString(f.output + "\n\n")
+		sb.WriteString(stripANSI(f.output) + "\n\n")
 	}
 	sb.WriteString("Fix the issues above, then retry PR creation.\n")
 	sb.WriteString(sep + "\n")
