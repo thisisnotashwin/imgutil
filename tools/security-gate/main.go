@@ -6,8 +6,19 @@ import (
 	"os/exec"
 )
 
+// allowedCommands is the explicit allowlist of binaries realExec may spawn.
+// Any name not in this set is rejected, closing the G204 design-surface risk.
+var allowedCommands = map[string]bool{
+	"go":            true,
+	"golangci-lint": true,
+	"grep":          true,
+}
+
 func realExec(name string, args []string, dir string) (string, int) {
-	cmd := exec.Command(name, args...)
+	if !allowedCommands[name] {
+		return fmt.Sprintf("security-gate: blocked disallowed command %q", name), 1
+	}
+	cmd := exec.Command(name, args...) //nolint:gosec // G204: name is allowlist-validated above
 	cmd.Dir = dir
 	out, err := cmd.CombinedOutput()
 	if err != nil {

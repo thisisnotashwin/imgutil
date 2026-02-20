@@ -141,6 +141,64 @@ func TestSecretPatternVendorExcluded(t *testing.T) {
 	}
 }
 
+func TestUppercasePRCommandTriggersGate(t *testing.T) {
+	exec := fakeExec([]struct {
+		out  string
+		code int
+	}{
+		{"", 0}, // go vet passes
+		{"", 0}, // golangci-lint passes
+		{"", 1}, // grep: no matches
+	})
+	result := Run(`{"command": "GH PR CREATE --title foo"}`, "/repo", exec)
+	if result.Code != 0 {
+		t.Errorf("expected PASS, got code %d: %s", result.Code, result.Output)
+	}
+	if !strings.Contains(result.Output, "PASS") {
+		t.Errorf("expected PASS in output, got: %s", result.Output)
+	}
+}
+
+func TestVendorFilterByPathNotContent(t *testing.T) {
+	// Match line whose content contains "vendor/" but whose file path does not.
+	// Old filter would silently suppress this; new path-based filter must keep it.
+	grepOut := "commands/real.go:12: token = \"x\" // from vendor/lib\n"
+	exec := fakeExec([]struct {
+		out  string
+		code int
+	}{
+		{"", 0},      // go vet passes
+		{"", 0},      // golangci-lint passes
+		{grepOut, 0}, // grep finds match in non-vendor file
+	})
+	result := Run(`{"command": "gh pr create"}`, "/repo", exec)
+	if result.Code != 1 {
+		t.Errorf("expected FAIL when match content contains 'vendor/' but path does not, got code %d", result.Code)
+	}
+}
+
+func TestANSIStrippedFromOutput(t *testing.T) {
+	ansiVetOut := "\x1b[31merror: bad code\x1b[0m"
+	exec := fakeExec([]struct {
+		out  string
+		code int
+	}{
+		{ansiVetOut, 1}, // go vet fails with ANSI-coloured output
+		{"", 0},         // golangci-lint passes
+		{"", 1},         // grep: no matches
+	})
+	result := Run(`{"command": "gh pr create"}`, "/repo", exec)
+	if result.Code != 1 {
+		t.Errorf("expected FAIL, got code %d", result.Code)
+	}
+	if strings.Contains(result.Output, "\x1b[") {
+		t.Errorf("expected ANSI sequences stripped from output, got: %q", result.Output)
+	}
+	if !strings.Contains(result.Output, "error: bad code") {
+		t.Errorf("expected plain text content preserved after stripping, got: %s", result.Output)
+	}
+}
+
 func TestMultipleFailures(t *testing.T) {
 	grepOut := "commands/foo.go:1: InsecureSkipVerify: true\n"
 	exec := fakeExec([]struct {
