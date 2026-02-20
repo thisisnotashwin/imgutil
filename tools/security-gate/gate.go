@@ -54,7 +54,6 @@ func runChecks(repoDir string, exec execFunc) []checkFailure {
 	out, code = exec("golangci-lint", []string{
 		"run",
 		"--enable=gosec,errcheck,bodyclose,noctx",
-		"--out-format=line-number",
 		"--timeout=120s",
 	}, repoDir)
 	if code != 0 {

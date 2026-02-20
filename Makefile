@@ -14,6 +14,11 @@ build: ## Build binary for current platform → ./bin/imgutil
 	@mkdir -p bin
 	@go build $(LDFLAGS) -o bin/$(BINARY) ./cmd/imgutil
 
+.PHONY: build-tools
+build-tools: ## Build dev tools → ./bin/security-gate
+	@mkdir -p bin
+	@go build -o bin/security-gate ./tools/security-gate
+
 .PHONY: clean
 clean: ## Remove build artefacts (bin/ and dist/)
 	@rm -rf bin dist
