@@ -20,6 +20,15 @@
             "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q '\"file_path\".*go\\.sum'; then echo 'Blocked: go.sum must be managed by go mod tidy, not edited manually.' && exit 1; fi"
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git -C \"${CLAUDE_PROJECT_DIR:-.}\" rev-parse --show-toplevel 2>/dev/null || echo .)\"/.claude/hooks/security_gate.py"
+          }
+        ]
       }
     ]
   }
